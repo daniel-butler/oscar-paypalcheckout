@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <script
+    src="https://www.paypal.com/sdk/js?client-id=AVCu1aK8oOq4xM13JXzMWf3WcZnKllxzN3i5613We8dYj93YzFdYcU2IQm3_8pqIFLdJZzcss2nMSTMO"> // Required. Replace SB_CLIENT_ID with your sandbox client ID.
+  </script>
+
+  <div id="paypal-button-container" class="testclass"></div>
+
+  <h2>Token</h2>
+  <div id="csrftoken"></div>
+  <p>{% csrf_token %}</p>
+
+<script>
+    let csrftoken = getCookie('csrftoken');
+    document.getElementById("csrftoken").textContent = "TEstcontent";
+
+    //  document.getElementById("demo"). = "Paragraph changed!";
+
+  let pp  = paypal.Buttons({
+
+
+    createOrder: function(data, actions) {
+      // This function sets up the details of the transaction, including the amount and line item details.
+      return actions.order.create({
+        purchase_units: [{
+          amount: {
+            value: '0.01'
+          }
+        }]
+      });
+    },
+
+    onApprove: function(data) {
+        console.log(csrftoken)
+        post('/', {orderXID: data.orderID, csrfmiddlewaretoken:csrftoken});
+   }
+
+
+  }).render({
+        locale: 'de_DE',
+        style: {
+        size: 'small',
+        color: 'gold',
+        shape: 'pill',
+        label: 'checkout',
+        tagline: 'true'
+    }
+}, '#paypal-button-container')
+
+
+
+ // render('#paypal-button-container');
+
+
+
+
+
+  //This function displays Smart Payment Buttons on your web page.
+  //pp.createOrder
+
+  document.getElementById("paypal-button-container").style.display = 'none';
+
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+
+function post(path, params, method='post') {
+
+  // The rest of this code assumes you are not using a library.
+  // It can be made less wordy if you use one.
+  const form = document.createElement('form');
+  form.method = method;
+  form.action = path;
+
+
+
+
+  for (const key in params) {
+    if (params.hasOwnProperty(key)) {
+      const hiddenField = document.createElement('input');
+      hiddenField.type = 'hidden';
+      hiddenField.name = key;
+      hiddenField.value = params[key];
+
+      form.appendChild(hiddenField);
+    }
+  }
+
+   const hiddenField = document.createElement('input');
+   hiddenField.type = 'hidden';
+   hiddenField.name = 'csrfmiddlewaretoken';
+   hiddenField.value =  getCookie('csrftoken');
+
+
+  form.appendChild(hiddenField);
+
+  document.body.appendChild(form);
+  form.submit();
+}
+
+</script>
+</body>
+</html>
