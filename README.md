@@ -51,11 +51,15 @@ The sample code check if the payment method is paypal. Then it creates a paypal 
 
 When the user authenticated or cancel the order, the provided views in the paypalcheckout application handel remaining steps of submiting the order.
 
+For example:
+
 
 ```python
 
+from oscar.apps.checkout import views
 from paypalcheckout.paypalcommands import CreatePaypalOrder
 
+class PaymentDetailsView(views.PaymentDetailsView):
 
  def handle_payment(self, order_number, total, **kwargs):
     
