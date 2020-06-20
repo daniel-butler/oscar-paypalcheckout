@@ -35,7 +35,7 @@ PAYPAL_CLIENT_SECRET ="some-secret"
 PAYPAL_DEBUG = True
 #'live'  or 'sandbox'
 PAYPAL_ENVIRONMENT ="sandbox"
-
+```
 
 
 
@@ -66,7 +66,7 @@ from paypalcheckout.paypalcommands import CreatePaypalOrder
             pp_link=pp_order.create_order(order_number, total, shipping_address)
             raise RedirectRequired(pp_link)
 
-
+```
 
 
 
