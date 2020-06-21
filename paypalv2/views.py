@@ -36,8 +36,8 @@ class PaypalCancelView(PaypalView):
         self.restore_frozen_basket()
 
         # and return to the preview and show a error message
-        # @todo: needs translation
-        kwargs = {"error": "Die Paypal Zahlung wurde abgebrochen"}
+        # @todo: needs translatio
+        kwargs = {"error": "PayPal payment was cancelled"}
         ctx = self.get_context_data(**kwargs)
         return self.render_to_response(ctx)
 
