@@ -5,7 +5,7 @@ from django.views import generic
 from oscar.apps.checkout import signals
 from oscar.apps.payment.models import SourceType, Source
 from oscar.core.loading import get_class
-from .paypalcommands import CapturePaypalOrder
+from .gateway import CapturePaypalOrder
 
 OrderPlacementMixin = get_class('checkout.mixins', 'OrderPlacementMixin')
 
@@ -15,7 +15,7 @@ logger = logging.getLogger('oscar.checkout')
 
 
 class PaypalView(OrderPlacementMixin, generic.TemplateView):
-    """ Only purpose is to have a common way to handle errors and return the preview.
+    """Only purpose is to have a common way to handle errors and return the preview.
     """
     template_name = 'oscar/checkout/preview.html'
 
@@ -54,16 +54,15 @@ class PaypalSuccessView(PaypalView):
         basket = self.get_submitted_basket()
 
         # Basket strategy needed to calculate prices
-        # and the basket in session is stroed without  strategy
-        # Use same strategy as current request basket, whitch
+        # and the basket in session is stored without  strategy
+        # Use same strategy as current request basket, which
         # was created by the middleware
         basket.strategy = self.request.basket.strategy
 
         shipping_address = self.get_shipping_address(basket)
-        shipping_method = self.get_shipping_method(
-            basket, shipping_address)
+        shipping_method = self.get_shipping_method(basket, shipping_address)
         if not shipping_method:
-            #  this should nbe impossible at this point
+            #  this should be impossible at this point
             # however we handle it
             total = shipping_charge = None
             raise Exception("shipping_method not set. Can't calculate order totals")
@@ -98,7 +97,8 @@ class PaypalSuccessView(PaypalView):
         # Record payment event
         self.add_payment_event('pre-auth', order_total.incl_tax)
 
-        return self.submit(order_number, order_total, basket, shipping_address, shipping_method, shipping_charge)
+        return self.submit(order_number, order_total,
+                           basket, shipping_address, shipping_method, shipping_charge)
 
     def submit(self, order_number, order_total, basket, shipping_address, shipping_method, shipping_charge):
         """
