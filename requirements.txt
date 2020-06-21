@@ -1,0 +1,3 @@
+django-oscar==2.0.4
+paypal-checkout-serversdk
+django>=2.2,<2.3
