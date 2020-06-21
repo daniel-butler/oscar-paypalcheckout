@@ -8,8 +8,8 @@ from django.conf import settings
 
 PAYPAL_CLIENT_ID = getattr(settings, 'PAYPAL_CLIENT_ID')
 PAYPAL_CLIENT_SECRET = getattr(settings, 'PAYPAL_CLIENT_SECRET')
-PAYPAL_ENVIRONMENT = getattr(settings, 'PAYPAL_ENVIRONMENT')
-PAYPAL_DEBUG = getattr(settings, 'PAYPAL_DEBUG')
+PAYPAL_ENVIRONMENT = getattr(settings, 'PAYPAL_ENVIRONMENT', 'sandbox')
+PAYPAL_DEBUG = getattr(settings, 'PAYPAL_DEBUG', True)
 
 
 class PayPalClient:
@@ -18,7 +18,7 @@ class PayPalClient:
         self.client_secret = PAYPAL_CLIENT_SECRET
 
         # choose live or sandbox Environment
-        if PAYPAL_ENVIRONMENT  == 'live':
+        if PAYPAL_ENVIRONMENT == 'live':
             self.environment = LiveEnvironment(client_id=self.client_id, client_secret=self.client_secret)
         else:
 
