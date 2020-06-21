@@ -88,10 +88,9 @@ class CreatePaypalOrder(PayPalClient):
         request = OrdersCreateRequest()
         request.headers['prefer'] = 'return=representation'
         body = self.build_request_body(order_number, order_total, shipping_address)
-        print("json_data: ", json.dumps(body, indent=4))
-
         request.request_body(body)
         response = self.client.execute(request)
+
         if PAYPAL_DEBUG:
             json_data = self.object_to_json(response.result)
             print("json_data: ", json.dumps(json_data, indent=4))

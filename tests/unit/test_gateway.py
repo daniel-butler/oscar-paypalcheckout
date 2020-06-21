@@ -36,6 +36,16 @@ def test_getting_name_returns_expected_value():
     # THEN
     pytest.fail('not completed!')
 
+
+def test_create_order_returns_link():
+    # GIVEN
+
+    # WHEN
+
+    # THEN
+    pytest.fail('not completed!')
+
+
 ## Sample code from paypal
 #
 # def build_request_body():
