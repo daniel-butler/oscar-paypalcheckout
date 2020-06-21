@@ -1,19 +1,23 @@
 import json
-from typing import Optional
+from typing import Optional, TYPE_CHECKING, Union
 
 from django.conf import settings
 from .paypalclient import PayPalClient
-from paypalcheckoutsdk.orders import OrdersCreateRequest
-from paypalcheckoutsdk.orders import OrdersCaptureRequest
+from paypalcheckoutsdk.orders import OrdersCreateRequest, OrdersCaptureRequest
+
+if TYPE_CHECKING:
+    from paypalhttp.http_response import HttpResponse
+    from paypalhttp.http_error import HttpError
+
 
 PAYPAL_SUCCESS_PAGE = getattr(settings, 'PAYPAL_SUCCESS_PAGE')
 PAYPAL_CANCEL_PAGE = getattr(settings, 'PAYPAL_CANCEL_PAGE')
 PAYPAL_BRAND_NAME = getattr(settings, 'PAYPAL_BRAND_NAME')
-PAYPAL_DEBUG = getattr(settings, 'PAYPAL_DEBUG')
+PAYPAL_DEBUG = getattr(settings, 'PAYPAL_DEBUG', True)
 
 
 class CapturePaypalOrder(PayPalClient):
-    def capture(self, paypal_order_id):
+    def capture(self, paypal_order_id) -> Union[HttpResponse, HttpError]:
         request = OrdersCaptureRequest(paypal_order_id)
         # 3. Call PayPal to capture an order
         response = self.client.execute(request)
@@ -25,7 +29,7 @@ class CapturePaypalOrder(PayPalClient):
 
 class CreatePaypalOrder(PayPalClient):
     """
-    maybe is necessary to override the name and address details
+    Maybe is necessary to override the name and address details
     """
 
     def get_name(self, shipping_address) -> str:
@@ -246,7 +250,7 @@ json_data:  {
     ]
 }
 
-    '''
+'''
 
 
 

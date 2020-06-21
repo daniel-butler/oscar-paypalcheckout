@@ -1,7 +1,8 @@
 # Base
+django>=2.2,<2.3
 django-oscar==2.0.4
 paypal-checkout-serversdk
-django>=2.2,<2.3
+paypalhttp==1.0.0
 
 # Testing
 pytest-django
