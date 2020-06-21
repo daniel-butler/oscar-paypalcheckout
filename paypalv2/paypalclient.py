@@ -24,9 +24,11 @@ class PayPalClient:
 
         # choose live or sandbox Environment
         if PAYPAL_ENVIRONMENT == 'live':
-            self.environment = LiveEnvironment(client_id=self.client_id, client_secret=self.client_secret)
+            self.environment = LiveEnvironment(
+                client_id=self.client_id, client_secret=self.client_secret)
         else:
-            self.environment = SandboxEnvironment(client_id=self.client_id, client_secret=self.client_secret)
+            self.environment = SandboxEnvironment(
+                client_id=self.client_id, client_secret=self.client_secret)
 
         self.client = PayPalHttpClient(self.environment)
 
@@ -34,14 +36,13 @@ class PayPalClient:
         """
         Function to print all json data in an organized readable manner
         """
-        result = {}
-
         # @todo: what does this do?
         if sys.version_info[0] < 3:
             itr = json_data.__dict__.iteritems()
         else:
             itr = json_data.__dict__.items()
 
+        result = {}
         for key, value in itr:
             # Skip internal attributes.
             if key.startswith("__") or key.startswith("_"):
@@ -51,13 +52,14 @@ class PayPalClient:
                           value
         return result
 
-    def array_to_json_array(self, json_array):
-        result =[]
-        if isinstance(json_array, list):
-            for item in json_array:
-                result.append(self.object_to_json(item) if not self.is_primitive(item)
-                              else self.array_to_json_array(item) if isinstance(item, list) else item)
-        return result
+    def array_to_json_array(self, json_array) -> list:
+        return [
+            self.object_to_json(item) if self.is_primitive(item)
+            else self.array_to_json_array(item) if isinstance(item, list)
+            else item
+
+            for item in json_array
+        ]
 
     def is_primitive(self, data):
         return isinstance(data, str) or isinstance(data, int)
