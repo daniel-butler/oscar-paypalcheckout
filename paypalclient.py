@@ -1,11 +1,15 @@
-from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment, LiveEnvironment
-
-import sys
-'''
+"""
 https://developer.paypal.com/docs/api/orders/v2/
-'''
+"""
+import sys
 
-from frobshop.settings import PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_ENVIRONMENT
+from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment, LiveEnvironment
+from django.conf import settings
+
+PAYPAL_CLIENT_ID = getattr(settings, 'PAYPAL_CLIENT_ID')
+PAYPAL_CLIENT_SECRET = getattr(settings, 'PAYPAL_CLIENT_SECRET')
+PAYPAL_ENVIRONMENT = getattr(settings, 'PAYPAL_ENVIRONMENT')
+PAYPAL_DEBUG = getattr(settings, 'PAYPAL_DEBUG')
 
 
 class PayPalClient:
@@ -14,7 +18,7 @@ class PayPalClient:
         self.client_secret = PAYPAL_CLIENT_SECRET
 
         # choose live or sandbox Environment
-        if(PAYPAL_ENVIRONMENT  == 'live'):
+        if PAYPAL_ENVIRONMENT  == 'live':
             self.environment = LiveEnvironment(client_id=self.client_id, client_secret=self.client_secret)
         else:
 
@@ -39,16 +43,17 @@ class PayPalClient:
             if key.startswith("__") or key.startswith("_"):
                 continue
             result[key] = self.array_to_json_array(value) if isinstance(value, list) else\
-                        self.object_to_json(value) if not self.is_primittive(value) else\
-                         value
-        return result;
+                          self.object_to_json(value) if not self.is_primittive(value) else\
+                          value
+        return result
+
     def array_to_json_array(self, json_array):
         result =[]
         if isinstance(json_array, list):
             for item in json_array:
-                result.append(self.object_to_json(item) if  not self.is_primittive(item) \
+                result.append(self.object_to_json(item) if not self.is_primittive(item)
                               else self.array_to_json_array(item) if isinstance(item, list) else item)
-        return result;
+        return result
 
     def is_primittive(self, data):
         return isinstance(data, str) or isinstance(data, str) or isinstance(data, int)

@@ -1,13 +1,15 @@
-from oscar.core.loading import get_class, get_model
+import json
+from typing import Optional
 
-from frobshop.settings import PAYPAL_SUCCESS_PAGE,PAYPAL_CANCEL_PAGE,PAYPAL_BRAND_NAME,PAYPAL_DEBUG
-from paypalcheckout.paypalclient import PayPalClient
+from django.conf import settings
+from .paypalclient import PayPalClient
 from paypalcheckoutsdk.orders import OrdersCreateRequest
 from paypalcheckoutsdk.orders import OrdersCaptureRequest
-import json
 
-
-
+PAYPAL_SUCCESS_PAGE = getattr(settings, 'PAYPAL_SUCCESS_PAGE')
+PAYPAL_CANCEL_PAGE = getattr(settings, 'PAYPAL_CANCEL_PAGE')
+PAYPAL_BRAND_NAME = getattr(settings, 'PAYPAL_BRAND_NAME')
+PAYPAL_DEBUG = getattr(settings, 'PAYPAL_DEBUG')
 
 
 class CapturePaypalOrder(PayPalClient):
@@ -15,55 +17,48 @@ class CapturePaypalOrder(PayPalClient):
         request = OrdersCaptureRequest(paypal_order_id)
         # 3. Call PayPal to capture an order
         response = self.client.execute(request)
-        if(PAYPAL_DEBUG):
+        if PAYPAL_DEBUG:
             json_data = self.object_to_json(response.result)
             print(json.dumps(json_data, indent=4))
         return response
 
 
-
 class CreatePaypalOrder(PayPalClient):
-    '''
-    maybe is nesssary to override the name and address details
-    '''
-    def get_name(self,shipping_address):
-        return shipping_address.first_name + " " + shipping_address.last_name
+    """
+    maybe is necessary to override the name and address details
+    """
 
+    def get_name(self, shipping_address):
+        return shipping_address.first_name + " " + shipping_address.last_name
 
     def get_shipping_address(self, shippingAddress):
         return {
-            "address_line_1": shippingAddress.line1, #street
+            "address_line_1": shippingAddress.line1,  # street
             "address_line_2": shippingAddress.line3,
-            "admin_area_2": shippingAddress.line4, # City
+            "admin_area_2": shippingAddress.line4,  # City
             "postal_code": shippingAddress.postcode,
             "country_code": shippingAddress.country.code,
         }
 
     def get_application_context(self, orderno):
-        '''
+        """
         @todo: Check if global vars are set
 
-        '''
+        """
 
         print("App context  Orderno " + str(orderno))
 
-        return  {
-            "return_url": PAYPAL_SUCCESS_PAGE+str(orderno),
-            "cancel_url": PAYPAL_CANCEL_PAGE+str(orderno),
+        return {
+            "return_url": PAYPAL_SUCCESS_PAGE + str(orderno),
+            "cancel_url": PAYPAL_CANCEL_PAGE + str(orderno),
             "brand_name": PAYPAL_BRAND_NAME,
-            # unclear what this means and if it's nessesary
+            # unclear what this means and if it's necessary
             "landing_page": "BILLING",
             "shipping_preference": "SET_PROVIDED_ADDRESS",
             "user_action": "CONTINUE"
         }
 
-
-
-
     def build_request_body(self,order_number,order_total,shipping_address):
-
-
-
         return {
             "intent":'CAPTURE',
             "application_context": self.get_application_context(order_number),
@@ -86,35 +81,31 @@ class CreatePaypalOrder(PayPalClient):
 
         }
 
-
-    def create_order(self,order_number, order_total,shipping_address):
-
+    def create_order(self, order_number, order_total, shipping_address) -> Optional[str]:
         '''
 
         :param order: the Oscar Order
-        :param debug: Ift true, the json response data are print to console
+        :param debug: If true, the json response data are print to console
         :return: the approve link to redirect to paypal
         '''
-
-
         request = OrdersCreateRequest()
         request.headers['prefer'] = 'return=representation'
-        body = self.build_request_body(order_number,order_total,shipping_address)
+        body = self.build_request_body(order_number, order_total, shipping_address)
         print("json_data: ", json.dumps(body, indent=4))
 
         request.request_body(body)
         response = self.client.execute(request)
-        if(PAYPAL_DEBUG):
+        if PAYPAL_DEBUG:
             json_data = self.object_to_json(response.result)
             print("json_data: ", json.dumps(json_data, indent=4))
 
         for link in response.result.links:
-            if (link.rel == "approve"):
-                return(link.href)
-
+            if link.rel == "approve":
+                return link.href
 
 
     '''
+    
     Sample code from paypal:
     
      def build_request_body():
