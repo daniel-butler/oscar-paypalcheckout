@@ -53,6 +53,7 @@ When the user authenticated or cancel the order, the provided views in the paypa
 For example:
 
 
+# @todo update this once completed
 ```python
 
 from oscar.apps.checkout import views
