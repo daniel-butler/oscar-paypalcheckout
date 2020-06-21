@@ -26,5 +26,3 @@ def test_paypal_environment_not_set_to_live_sets_the_environment_to_SandboxEnvir
 
     # THEN
     pytest.fail('not completed!')
-
-
