@@ -5,6 +5,7 @@ from django.views import generic
 from oscar.apps.checkout import signals
 from oscar.apps.payment.models import SourceType, Source
 from oscar.core.loading import get_class
+
 from .gateway import CapturePaypalOrder
 
 OrderPlacementMixin = get_class('checkout.mixins', 'OrderPlacementMixin')
