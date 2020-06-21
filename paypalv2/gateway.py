@@ -1,5 +1,5 @@
 import json
-from typing import Optional, TYPE_CHECKING, Union
+from typing import Optional, Union, TYPE_CHECKING
 
 from django.conf import settings
 from .paypalclient import PayPalClient
