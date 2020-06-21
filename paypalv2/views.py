@@ -36,7 +36,7 @@ class PaypalCancelView(PaypalView):
         self.restore_frozen_basket()
 
         # and return to the preview and show a error message
-        # @todo: needs translatio
+        # @todo: needs translation
         kwargs = {"error": "PayPal payment was cancelled"}
         ctx = self.get_context_data(**kwargs)
         return self.render_to_response(ctx)
