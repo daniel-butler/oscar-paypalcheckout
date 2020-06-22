@@ -8,3 +8,9 @@ paypalhttp==1.0.0
 pytest
 pytest-django
 pytest-cov
+sorl-thumbnail
+
+
+# Development
+django-extensions
+django-debug-toolbar

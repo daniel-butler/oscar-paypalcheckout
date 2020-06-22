@@ -108,7 +108,7 @@ class PaypalSuccessView(PaypalView):
         billing_address = self.get_billing_address(shipping_address)
         order_kwargs = {}
         # raise the same signal, then in PaymentDetailsView.submit, i have now idea if this needed
-        # and if it may have side effect under certain  circumstance
+        # and if it may have side effect under certain circumstance
         # It may reviewed by someone with good under standing of oscars signals
         signals.post_payment.send_robust(sender=self, view=self)
         return self.handle_order_placement(

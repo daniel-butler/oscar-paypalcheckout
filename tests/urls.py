@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import PaypalCancelView, PaypalSuccessView
+from paypalv2.views import PaypalCancelView, PaypalSuccessView
 
 app_name = 'paypalcheckout'
 
