@@ -5,15 +5,15 @@ from oscar.defaults import *  # noqa
 try:
     from integration import *   # noqa
 except ImportError:
-    PAYPAL_SUCCESS_PAGE = ''
-    PAYPAL_CANCEL_PAGE = ''
-    PAYPAL_BRAND_NAME = ''
+    PAYPAL_SUCCESS_PAGE = 'example.com/success/'
+    PAYPAL_CANCEL_PAGE = 'example.com/cancel/'
+    PAYPAL_BRAND_NAME = 'Test Company'
     PAYPAL_DEBUG = ''
-    PAYPAL_CLIENT_ID = ''
+    PAYPAL_CLIENT_ID = 'Test'
     PAYPAL_CLIENT_SECRET = ''
     PAYPAL_ENVIRONMENT = ''
 
-SECRET_KEY = '9%d9&5!^+hcq!pin#0lfz(qj8j2h7y$p*rr-o#cy+)9%dyvwkn'
+SECRET_KEY = "9%d9&5!^+hcq!pin#0lfz(qj8j2h7y$p*rr-o#cy+)9%dyvwkn"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -29,9 +29,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'paypalv2',
 
-    # Forked Oscar Apps
-    'tests.shipping.apps.ShippingConfig',
-
     # Oscar
     'oscar',
     'oscar.apps.analytics',
@@ -46,6 +43,7 @@ INSTALLED_APPS = [
     'oscar.apps.order',
     'oscar.apps.customer',
     'oscar.apps.search',
+    'oscar.apps.shipping',
     'oscar.apps.voucher',
     'oscar.apps.wishlists',
     'oscar.apps.dashboard',

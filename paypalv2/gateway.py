@@ -1,13 +1,12 @@
 import json
-from typing import Optional, Union, TYPE_CHECKING
+from typing import Optional, Union
 
 from django.conf import settings
 from .paypalclient import PayPalClient
 from paypalcheckoutsdk.orders import OrdersCreateRequest, OrdersCaptureRequest
 
-if TYPE_CHECKING:
-    from paypalhttp.http_response import HttpResponse
-    from paypalhttp.http_error import HttpError
+from paypalhttp.http_response import HttpResponse
+from paypalhttp.http_error import HttpError
 
 
 PAYPAL_SUCCESS_PAGE = getattr(settings, 'PAYPAL_SUCCESS_PAGE')
@@ -62,7 +61,7 @@ class CreatePaypalOrder(PayPalClient):
             "user_action": "CONTINUE"
         }
 
-    def build_request_body(self, order_number, order_total,shipping_address) -> dict:
+    def build_request_body(self, order_number, order_total, shipping_address) -> dict:
         return {
             "intent": 'CAPTURE',
             "application_context": self.get_application_context(order_number),

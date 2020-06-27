@@ -8,6 +8,7 @@ paypalhttp==1.0.0
 pytest
 pytest-django
 pytest-cov
+pytest-mock
 sorl-thumbnail
 
 

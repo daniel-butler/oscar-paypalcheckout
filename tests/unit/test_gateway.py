@@ -1,12 +1,87 @@
+from decimal import Decimal as D
+
 import pytest
 
+from paypalv2 import gateway
 
-def test_build_request_body_returns_expected_json():
-    # GIVEN
 
-    # WHEN
+@pytest.fixture
+def test_order(mocker):
+    return mocker.Mock(currency="USD", incl_tax=D('100'))
 
-    # THEN
+
+@pytest.fixture
+def test_address(mocker):
+    return mocker.Mock(
+        first_name="Bob", last_name="Buyer", line1='123 St', line3=None,
+        line4='admin_area', postcode='33596', country=mocker.Mock(code='US'))
+
+
+def test_build_request_body_returns_expected_json(test_order, test_address):
+    # GIVEN a create paypal order client
+    order_client = gateway.CreatePaypalOrder()
+
+    # WHEN building the request body
+    request_body = order_client.build_request_body(
+        order_number='1001', order_total=test_order, shipping_address=test_address)
+
+    # THEN the body is as expected
+    assert request_body == dict(
+        intent="CAPTURE", application_context=dict(
+            return_url="example.com/success/1001",
+            cancel_url="example.com/cancel/1001",
+            brand_name='Test Company',
+            landing_page="BILLING",
+            shipping_preference="SET_PROVIDED_ADDRESS",
+            user_action="CONTINUE"
+        ), purchase_units=[dict(
+            amount=dict(
+                currency_code="USD",
+                value='100'
+            ),
+            shipping=dict(
+                method="DHL",
+                name=dict(full_name="Bob Buyer"),
+                address=dict(
+                    address_line_1="123 St", address_line_2=None, admin_area_2="admin_area",
+                    postal_code="33596", country_code="US")
+            )
+        )]
+    )
+
+
+def test_build_request_body_for_delivery_of_a_halloween_box_with_preview_page(test_order, test_address):
+    # GIVEN a create paypal order client
+    order_client = gateway.CreatePaypalOrder()
+
+    # WHEN building the request body
+    request_body = order_client.build_request_body(
+        order_number='1001', order_total=test_order, shipping_address=test_address)
+
+    # THEN the body is as expected
+    assert request_body == dict(
+        intent="CAPTURE", application_context=dict(
+            return_url="example.com/success/1001",
+            cancel_url="example.com/cancel/1001",
+            landing_page="BILLING",
+            shipping_preference="SET_PROVIDED_ADDRESS",
+            user_action="PAY_NOW"
+        ), purchase_units=[dict(
+            description="Halloween Box",
+            invoice_id="TEST ORDER NUMBER",
+            amount=dict(currency_code="USD", value='100'),
+            shipping=dict(
+                method="Delivery",
+                name=dict(full_name="Bob Buyer"),
+                address=dict(
+                    address_line_1="123 St", address_line_2=None, admin_area_2="admin_area",
+                    postal_code="33596", country_code="US")
+            )
+        )]
+    )
+
+
+def test_build_request_body_when_authorizing_payment(mocker):
     pytest.fail('not completed!')
 
 
