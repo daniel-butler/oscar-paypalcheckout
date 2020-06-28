@@ -52,20 +52,18 @@ When the user authenticated or cancel the order, the provided views in the paypa
 
 For example:
 
-
-# @todo update this once completed
 ```python
-
+# imports in the file
 from oscar.apps.checkout import views
 from oscar.core.loading import get_class
-from paypalv2.gateway import CreatePaypalOrder
-
 RedirectRequired = get_class("payment.exceptions", "RedirectRequired")
+
+# code required
+from paypalv2.gateway import CreatePaypalOrder
 
 class PaymentDetailsView(views.PaymentDetailsView):
 
     def handle_payment(self, order_number, total, **kwargs):
-    
         if self.checkout_session.payment_method() == "paypal":
             frozen_basket = self.get_submitted_basket()
             shipping_address = self.get_shipping_address(frozen_basket)

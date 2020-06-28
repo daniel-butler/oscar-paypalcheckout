@@ -86,30 +86,38 @@ def test_build_request_body_when_authorizing_payment(mocker):
 
 
 def test_getting_application_context_returns_expected_dict():
-    # GIVEN
+    # GIVEN a create paypal order client
+    order_client = gateway.CreatePaypalOrder()
 
-    # WHEN
-
-    # THEN
-    pytest.fail('not completed!')
-
-
-def test_getting_shipping_address_returns_expected_values():
-    # GIVEN
-
-    # WHEN
+    # WHEN creating the address
 
     # THEN
     pytest.fail('not completed!')
 
 
-def test_getting_name_returns_expected_value():
-    # GIVEN
+def test_getting_shipping_address_returns_expected_values(test_address):
+    # GIVEN the create paypal order
+    order_client = gateway.CreatePaypalOrder()
 
     # WHEN
+    address = order_client.get_shipping_address(test_address)
 
-    # THEN
-    pytest.fail('not completed!')
+    # THEN the address has the parts
+    assert address == dict(
+            address_line_1="123 St", address_line_2=None, admin_area_2="admin_area",
+            postal_code="33596", country_code="US"
+    )
+
+
+def test_getting_name_returns_expected_value(test_address):
+    # GIVEN the create paypal order
+    order_client = gateway.CreatePaypalOrder()
+
+    # WHEN getting the or
+    full_name = order_client.get_name(test_address)
+
+    # THEN the name is as expect
+    assert full_name == 'Bob Buyer'
 
 
 def test_create_order_returns_link():
