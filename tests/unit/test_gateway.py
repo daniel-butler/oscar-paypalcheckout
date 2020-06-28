@@ -89,20 +89,28 @@ def test_getting_application_context_returns_expected_dict():
     # GIVEN a create paypal order client
     order_client = gateway.CreatePaypalOrder()
 
-    # WHEN creating the address
+    # WHEN creating the application context
+    result = order_client.get_application_context('1001')
 
-    # THEN
-    pytest.fail('not completed!')
+    # THEN the result is as expected
+    assert result == {
+        "return_url": 'example.com/success/1001',
+        "cancel_url": 'example.com/cancel/1001',
+        "brand_name": 'Test Company',
+        "landing_page": "BILLING",
+        "shipping_preference": "SET_PROVIDED_ADDRESS",
+        "user_action": "CONTINUE"
+    }
 
 
 def test_getting_shipping_address_returns_expected_values(test_address):
     # GIVEN the create paypal order
     order_client = gateway.CreatePaypalOrder()
 
-    # WHEN
+    # WHEN creating the address
     address = order_client.get_shipping_address(test_address)
 
-    # THEN the address has the parts
+    # THEN the address has the parts expected
     assert address == dict(
             address_line_1="123 St", address_line_2=None, admin_area_2="admin_area",
             postal_code="33596", country_code="US"
@@ -120,12 +128,19 @@ def test_getting_name_returns_expected_value(test_address):
     assert full_name == 'Bob Buyer'
 
 
-def test_create_order_returns_link():
-    # GIVEN
+def test_create_order_returns_link(mocker, test_address, test_order):
+    # GIVEN the create paypal order
+    order_client = gateway.CreatePaypalOrder()
 
-    # WHEN
+    # GIVEN the paypal client is mocked
+    client_mock = mocker.Mock()
+    order_client.client = client_mock
 
-    # THEN
+    # WHEN creating the order
+    order_client.create_order('1001', test_order, test_address)
+
+    # THEN the client is executed with the expected values
+    assert client_mock.execute.calls() == {}
     pytest.fail('not completed!')
 
 

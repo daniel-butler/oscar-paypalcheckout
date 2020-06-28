@@ -23,7 +23,6 @@ In Oscars settings.py add the application 'paypalcheckout'
 and add the necessary config parameter
 
 ```python
-
 #must match with view.py
 PAYPAL_SUCCESS_PAGE ="http://127.0.0.1:8000/paypal/success/"
 PAYPAL_CANCEL_PAGE ="http://127.0.0.1:8000/paypal/cancel/"
