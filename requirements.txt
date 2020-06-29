@@ -10,7 +10,7 @@ pytest-django
 pytest-cov
 pytest-mock
 sorl-thumbnail
-
+django_webtest
 
 # Development
 django-extensions
