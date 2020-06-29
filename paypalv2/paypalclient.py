@@ -6,8 +6,8 @@ import sys
 from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment, LiveEnvironment
 from django.conf import settings
 
-PAYPAL_CLIENT_ID = getattr(settings, 'PAYPAL_CLIENT_ID')
-PAYPAL_CLIENT_SECRET = getattr(settings, 'PAYPAL_CLIENT_SECRET')
+PAYPAL_CLIENT_ID = getattr(settings, 'PAYPAL_CLIENT_ID', 'Client id not set')
+PAYPAL_CLIENT_SECRET = getattr(settings, 'PAYPAL_CLIENT_SECRET', 'client secret not set')
 PAYPAL_ENVIRONMENT = getattr(settings, 'PAYPAL_ENVIRONMENT', 'sandbox')
 PAYPAL_DEBUG = getattr(settings, 'PAYPAL_DEBUG', True)
 
