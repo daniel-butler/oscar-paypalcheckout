@@ -89,7 +89,7 @@ def test_serializing_the_paypal_response_into_python_types():
         'intent': 'CAPTURE',
         'purchase_units': [
             {'reference_id': 'default', 'amount': {'currency_code': 'USD', 'value': '100.00'},
-             'payee': {'email_address': 'c1891603@business.example.com', 'merchant_id': 'xxx'},
+             'payee': {'email_address': '91603@business.example.com', 'merchant_id': 'xxx'},
              'shipping': {'method': 'DHL', 'name': {'full_name': 'Bob Buyer'},
                           'address': {'address_line_1': '123 St', 'admin_area_2': 'admin_area', 'postal_code': '33596',
                                       'country_code': 'US'}}}], 'create_time': '2020-07-04T17:28:59Z', 'links': [

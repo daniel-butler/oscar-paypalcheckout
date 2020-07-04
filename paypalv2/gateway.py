@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import Optional, Union
 
 from django.conf import settings
@@ -7,6 +8,8 @@ from paypalcheckoutsdk.orders import OrdersCreateRequest, OrdersCaptureRequest
 
 from paypalhttp.http_response import HttpResponse
 from paypalhttp.http_error import HttpError
+
+logger = logging.getLogger('oscar_paypalcheckoutv2')
 
 PAYPAL_SUCCESS_PAGE = getattr(settings, 'PAYPAL_SUCCESS_PAGE')
 PAYPAL_CANCEL_PAGE = getattr(settings, 'PAYPAL_CANCEL_PAGE')
@@ -19,9 +22,7 @@ class CapturePaypalOrder(PayPalClient):
         request = OrdersCaptureRequest(paypal_order_id)
         # 3. Call PayPal to capture an order
         response = self.client.execute(request)
-        if PAYPAL_DEBUG:
-            json_data = self.object_to_json(response.result)
-            print(json.dumps(json_data, indent=4))
+        logger.debug(f"Paypal Response {self.response_to_dict(response)}")
         return response
 
 
@@ -47,8 +48,7 @@ class CreatePaypalOrder(PayPalClient):
         @todo: Check if global vars are set
 
         """
-        if PAYPAL_DEBUG:
-            print("App context  Orderno " + str(orderno))
+        logger.debug("App context  Orderno " + str(orderno))
 
         return {
             "return_url": PAYPAL_SUCCESS_PAGE + str(orderno),
@@ -94,7 +94,7 @@ class CreatePaypalOrder(PayPalClient):
         response = self.client.execute(request)
 
         if PAYPAL_DEBUG:
-            json_data = self.object_to_json(response.result)
+            json_data = self.response_to_dict(response)
             print("json_data: ", json.dumps(json_data, indent=4))
 
         for link in response.result.links:
