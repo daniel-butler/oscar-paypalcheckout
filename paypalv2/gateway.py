@@ -8,7 +8,6 @@ from paypalcheckoutsdk.orders import OrdersCreateRequest, OrdersCaptureRequest
 from paypalhttp.http_response import HttpResponse
 from paypalhttp.http_error import HttpError
 
-
 PAYPAL_SUCCESS_PAGE = getattr(settings, 'PAYPAL_SUCCESS_PAGE')
 PAYPAL_CANCEL_PAGE = getattr(settings, 'PAYPAL_CANCEL_PAGE')
 PAYPAL_BRAND_NAME = getattr(settings, 'PAYPAL_BRAND_NAME')
@@ -68,7 +67,7 @@ class CreatePaypalOrder(PayPalClient):
             "purchase_units": [{
                 "amount": {
                     # @todo  Currency is set fixed to Euro. must be replaced
-                    "currency_code":  order_total.currency,
+                    "currency_code": order_total.currency,
                     "value": str(order_total.incl_tax),
                 },
                 "shipping": {
@@ -103,6 +102,28 @@ class CreatePaypalOrder(PayPalClient):
                 return link.href
 
 
+x = {
+    "name": "INVALID_REQUEST",
+    "message": "Request is not well-formed, syntactically incorrect, or violates schema.",
+    "debug_id": "8c444c6b4038b",
+    "details":
+        [
+            {"field": "/application_context/cancel_url",
+             "value": "example.com/cancel/1001",
+             "location": "body",
+             "issue": "INVALID_PARAMETER_SYNTAX",
+             "description": "The value of a field does not conform to the expected format."},
+            {"field": "/application_context/return_url",
+             "value": "example.com/success/1001",
+             "location": "body",
+             "issue": "INVALID_PARAMETER_SYNTAX",
+             "description": "The value of a field does not conform to the expected format."}
+        ],
+    "links": [
+        {"href": "https://developer.paypal.com/docs/api/orders/v2/#error-INVALID_PARAMETER_SYNTAX",
+         "rel": "information_link", "encType": "application/json"}
+    ]
+}
 '''
 
 Sample code from paypal:
@@ -250,6 +271,3 @@ json_data:  {
 }
 
 '''
-
-
-
