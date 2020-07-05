@@ -32,10 +32,3 @@ class PayPalClient:
                 client_id=self.client_id, client_secret=self.client_secret)
 
         self.client = PayPalHttpClient(self.environment)
-
-    def response_to_dict(self, response: HttpResponse) -> dict:
-        """
-        Function to print all json data in an organized readable manner
-        """
-        return response.result.dict()
-
