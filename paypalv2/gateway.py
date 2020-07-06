@@ -110,7 +110,6 @@ return \
     }
 
 """
-import json
 import logging
 from typing import Optional, Union
 
@@ -140,7 +139,7 @@ class CapturePaypalOrder(PayPalClient):
 
 class CreatePaypalOrder(PayPalClient):
     """
-    Maybe is necessary to override the name and address details
+    Maybe it is necessary to override the name and address details
     """
 
     def get_name(self, shipping_address) -> str:
