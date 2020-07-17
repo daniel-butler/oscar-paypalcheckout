@@ -5,13 +5,16 @@ from oscar.defaults import *  # noqa
 try:
     from integration import *   # noqa
 except ImportError:
-    PAYPAL_SUCCESS_PAGE = 'example.com/success/'
-    PAYPAL_CANCEL_PAGE = 'example.com/cancel/'
-    PAYPAL_BRAND_NAME = 'Test Company'
-    PAYPAL_DEBUG = ''
-    PAYPAL_CLIENT_ID = 'Test'
-    PAYPAL_CLIENT_SECRET = ''
-    PAYPAL_ENVIRONMENT = ''
+    pass
+
+
+PAYPAL_SUCCESS_PAGE = 'example.com/success/'
+PAYPAL_CANCEL_PAGE = 'example.com/cancel/'
+PAYPAL_BRAND_NAME = 'Test Company'
+PAYPAL_DEBUG = ''
+PAYPAL_CLIENT_ID = 'Test'
+PAYPAL_CLIENT_SECRET = ''
+PAYPAL_ENVIRONMENT = ''
 
 SECRET_KEY = "9%d9&5!^+hcq!pin#0lfz(qj8j2h7y$p*rr-o#cy+)9%dyvwkn"
 DATABASES = {
@@ -24,17 +27,22 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.flatpages',
     'django.contrib.staticfiles',
+
+    # Paypal Integration
     'paypalv2',
+    'tests.checkout.apps.CheckoutConfig',
 
     # Oscar
     'oscar',
     'oscar.apps.analytics',
     'oscar.apps.address',
     'oscar.apps.catalogue',
-    'oscar.apps.checkout',
+    # Removed because of custom integration
+    # 'oscar.apps.checkout',
     'oscar.apps.catalogue.reviews',
     'oscar.apps.partner',
     'oscar.apps.basket',
