@@ -1,15 +1,15 @@
+import sys
+from importlib import reload, import_module
 from decimal import Decimal as D
 
 import pytest
-
+from django.conf import settings
 from django.test.utils import override_settings
-from django.urls import reverse
-from oscar.apps.checkout import views
+from django.urls import reverse, clear_url_caches
+
 from oscar.core.loading import get_class, get_model
 from oscar.test import factories
 from oscar.test.testcases import WebTestCase
-
-from paypalv2.gateway import CreatePaypalOrder
 
 RedirectRequired = get_class("payment.exceptions", "RedirectRequired")
 UserAddress = get_model('address', 'UserAddress')
@@ -87,28 +87,58 @@ class CheckoutMixin(object):
         return payment_details.click(linkid="view_preview")
 
 
+def reload_url_conf():
+    """Reload URLs to pick up the overridden settings"""
+    if settings.ROOT_URLCONF in sys.modules:
+        reload(sys.modules[settings.ROOT_URLCONF])
+    import_module(settings.ROOT_URLCONF)
+    clear_url_caches()
+
+
 @override_settings(OSCAR_ALLOW_ANON_CHECKOUT=True)
 class TestPaymentCase(CheckoutMixin, WebTestCase):
+    is_anonymous = True
+
+    def setUp(self):
+        reload_url_conf()
+        super().setUp()
+
+    def test_redirects_customer_with_empty_basket(self):
+        response = self.get(reverse('checkout:index'))
+        self.assertRedirectsTo(response, 'basket:summary')
+
+    def test_shows_initial_data_if_the_form_has_already_been_submitted(self):
+        self.add_product_to_basket()
+        self.enter_guest_details('hey@you.com')
+        self.enter_shipping_address()
+        page = self.get(reverse('checkout:shipping-address'), user=self.user)
+
+        assert page.form['first_name'].value == 'John'
 
     def test_handling_payment_calls_paypal_with_expected_values(self):
-        # GIVEN a custom payment details view
-        class CustomPaymentDetailsView(views.PaymentDetailsView):
-            preview = True  # This way we skip the preview step
+        self.add_product_to_basket()
+        self.enter_guest_details('hey@you.com')
+        self.enter_shipping_address()
+        page = self.get(reverse('checkout:shipping-address'), user=self.user)
 
-            def handle_payment(self, order_number, total, **kwargs):
-                if self.checkout_session.payment_method() == "paypal":
-                    frozen_basket = self.get_submitted_basket()
-                    shipping_address = self.get_shipping_address(frozen_basket)
-                    pp_order = CreatePaypalOrder()
-                    pp_link = pp_order.create_order(order_number, total, shipping_address)
-                    raise RedirectRequired(pp_link)
+        assert page.form['first_name'].value == 'John'
 
-        detail_view = CustomPaymentDetailsView()
+    def test_saves_guest_email_with_order(self):
+        preview = self.ready_to_place_an_order(is_guest=True)
+        thank_you = preview.forms['place_order_form'].submit().follow()
+        order = thank_you.context['order']
+        assert order.guest_email == 'hello@egg.com'
 
-        # WHEN submitting an order
-        self.place_order()
+    def test_submitting_a_paypal_payment(self):
+        preview = self.ready_to_place_an_order(is_guest=True)
 
-        # THEN the payment to paypal is as expected
-        assert 'Something happened'
+        preview
+
+        # WHEN
+
+        # THEN
 
         pytest.fail('not completed!')
+
+
+
